@@ -2,36 +2,40 @@
 
 ## Setup
 
-Create the user who will own the database (also, PHP connection):
-  
-  CREATE USER coloruser WITH PASSWORD 'color';
+As your main admin user:
 
-Create the database:
+  Create the user who will own the database (also, PHP connection):
+    
+    CREATE USER coloruser WITH PASSWORD 'color';
 
-  CREATE DATABASE colordb_dev OWNER coloruser;
+  Create the database:
 
-Create colors table:
+    CREATE DATABASE colordb_dev OWNER coloruser;
 
-  CREATE TABLE colors(
-    id serial PRIMARY KEY,
-    color_name VARCHAR (50) UNIQUE NOT NULL,
-    hex_code CHAR (6) NOT NULL
-  );
+Log in as the new user in either PSequel or pgAdmin:
 
-Create the palettes table:
+  Create colors table:
 
-  CREATE TABLE palettes(
-    id serial PRIMARY KEY,
-    palette_name VARCHAR (50) UNIQUE NOT NULL
-  );
+    CREATE TABLE colors(
+      id serial PRIMARY KEY,
+      color_name VARCHAR (50) UNIQUE NOT NULL,
+      hex_code CHAR (6) NOT NULL
+    );
 
-Create the color_palette table:
+  Create the palettes table:
 
-  CREATE TABLE color_palette(
-    id serial PRIMARY KEY,
-    color_id integer NOT NULL,
-    palette_id integer NOT NULL
-  );
+    CREATE TABLE palettes(
+      id serial PRIMARY KEY,
+      palette_name VARCHAR (50) UNIQUE NOT NULL
+    );
+
+  Create the color_palette table:
+
+    CREATE TABLE color_palette(
+      id serial PRIMARY KEY,
+      color_id integer NOT NULL,
+      palette_id integer NOT NULL
+    );
 
 Seed the colors table:
 
