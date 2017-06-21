@@ -37,8 +37,10 @@
   }
 
   function removePalette($db, $id) {
-    $stmt = "delete from palettes where id=" . $id;
-    $result = pg_query($stmt);
+    $stmt_p = "delete from palettes where id=" . $id;
+    $stmt_cp = "delete from color_palette where palette_id=" . $id;
+    pg_query($stmt_cp);
+    pg_query($stmt_p);
   }
 
   function addPalette($db, $name) {
@@ -76,8 +78,10 @@ ORDER BY palette_name;
   }
 
   function removeColor($db, $id) {
-    $stmt = "delete from colors where id=" . $id;
-    $result = pg_query($stmt);
+    $stmt_c = "delete from colors where id=" . $id;
+    $stmt_cp = "delete from color_palette where color_id=" . $id;
+    pg_query($stmt_cp);
+    pg_query($stmt_c);
   }
 
 ?>
