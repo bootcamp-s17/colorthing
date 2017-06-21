@@ -32,16 +32,14 @@
   }
 
   function getColors($db) {
-    $request = pg_query(getDb(), "SELECT * FROM colors;");
+    $request = pg_query(getDb(), "SELECT * FROM colors order by color_name;");
     return pg_fetch_all($request);
   }
 
   function addColor($db, $name, $hex) {
-
     $stmt = "insert into colors (color_name, hex_code) values ("
       . '\'' . $name . '\', \''
       . $hex . '\');';
-
     $result = pg_query($stmt);
   }
 
@@ -52,40 +50,47 @@
 
 ?>
 
-<div class="container">
+<div class="container" style="padding-top: 30px;">
 
-<h1>Colorthing</h1>
+<h1 class="text-center">Colorthing</h1>
 
 <div>
 
-<form class="form-inline" method="get" action="">
-
+<form class="form-inline" method="get" action="" style="padding: 25px 0 30px 0;">
   <label class="sr-only" for="colorName">Color Name</label>
   <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="colorName" name="colorName" placeholder="The deep dark void...">
-
   <label class="sr-only" for="hexCode">Hex Code</label>
   <div class="input-group mb-2 mr-sm-2 mb-sm-0">
     <div class="input-group-addon">#</div>
     <input type="text" class="form-control" id="hexCode" name="hexCode" placeholder="000000">
   </div>
-
   <button type="submit" class="btn btn-secondary">Add Color</button>
 </form>
 
+<div class="row">
+
+<div class="col">
+  <h4>Palettes</h4>
+  <ul>
+    <li>One</li>
+    <li>Two</li>
+    <li>Three</li>
+  </ul>
+</div>
+
+<div class="col">
+<h4>All Colors</h4>
 <?php 
   foreach (getColors(getDb()) as $color) {
 ?>
-
   <div class="row mx-auto" style="padding: 10px 0;">
-
     <form method="get" action="">
       <input name="removeId" value="<?=$color['id'];?>" type="hidden">
       <button type="submit" class="close" aria-label="Remove">
         <span aria-hidden="true" style="padding-right: 10px;">&times;</span>
       </button>
     </form>
-
-    <div class="col" style="min-height: 40px; max-width: 100px; background-color: #<?=$color['hex_code'];?>;"></div>
+    <div class="col" style="min-height: 25px; max-width: 100px; background-color: #<?=$color['hex_code'];?>;"></div>
     <div class="col">
       <div class="align-middle">
         <?=$color['color_name'];?>
@@ -93,15 +98,14 @@
       </div>
     </div>
   </div>
-
 <?php 
   }
 ?>
+</div>
 
 </div>
 
-
-
+</div>
 </div>
 </body>
 </html>
