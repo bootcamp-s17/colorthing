@@ -18,6 +18,21 @@ Create colors table:
     hex_code CHAR (6) NOT NULL
   );
 
+Create the palettes table:
+
+  CREATE TABLE palettes(
+    id serial PRIMARY KEY,
+    palette_name VARCHAR (50) UNIQUE NOT NULL
+  );
+
+Create the color_palette table:
+
+  CREATE TABLE color_palette(
+    id serial PRIMARY KEY,
+    color_id integer NOT NULL,
+    palette_id integer NOT NULL
+  );
+
 Seed the colors table:
 
   INSERT INTO colors (color_name, hex_code) VALUES ('Black', '000000');
