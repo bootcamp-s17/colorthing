@@ -21,9 +21,41 @@
     addColor(getDb(), $safeColorName, $safeHexCode);
   }
 
-  if (isset($_GET['removeId'])) {
-    $safeId = htmlentities($_GET['removeId']);
+  if (isset($_GET['removeColorId'])) {
+    $safeId = htmlentities($_GET['removeColorId']);
     removeColor(getDb(), $safeId);
+  }
+
+  if (isset($_GET['paletteName'])) {
+    $safePaletteName = htmlentities($_GET['paletteName'], ENT_QUOTES);
+    addPalette(getDb(), $safePaletteName);
+  }
+
+  if (isset($_GET['removePaletteId'])) {
+    $safeId = htmlentities($_GET['removePaletteId']);
+    removePalette(getDb(), $safeId);
+  }
+
+  function removePalette($db, $id) {
+    $stmt = "delete from palettes where id=" . $id;
+    $result = pg_query($stmt);
+  }
+
+  function addPalette($db, $name) {
+    $stmt = "insert into palettes (palette_name) values ("
+      . '\'' . $name . '\');';
+    $result = pg_query($stmt);
+  }
+
+  function getPalettes($db) {
+    $request = pg_query(getDb(), "
+SELECT palettes.id AS palette_id, palette_name, color_palette.color_id, colors.color_name
+FROM palettes 
+LEFT JOIN color_palette ON palettes.id = color_palette.palette_id
+LEFT JOIN colors ON color_palette.color_id = colors.id
+ORDER BY palette_name;
+    ");
+    return pg_fetch_all($request);
   }
 
   function getDb() {
@@ -56,6 +88,7 @@
 
 <div>
 
+<h4>New Color</h4>
 <form class="form-inline" method="get" action="" style="padding: 25px 0 30px 0;">
   <label class="sr-only" for="colorName">Color Name</label>
   <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="colorName" name="colorName" placeholder="The deep dark void...">
@@ -67,15 +100,51 @@
   <button type="submit" class="btn btn-secondary">Add Color</button>
 </form>
 
+<h4>New Palette</h4>
+<form class="form-inline" method="get" action="" style="padding: 25px 0 30px 0;">
+  <label class="sr-only" for="paletteName">Palette Name</label>
+  <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="paletteName" name="paletteName" placeholder="The most beautiful...">
+  <button type="submit" class="btn btn-secondary">Add Palette</button>
+</form>
+
+
 <div class="row">
 
 <div class="col">
   <h4>Palettes</h4>
-  <ul>
-    <li>One</li>
-    <li>Two</li>
-    <li>Three</li>
-  </ul>
+
+<?php 
+
+  $last_palette = '';
+
+  foreach (getPalettes(getDb()) as $palette) {
+    if ($palette['palette_id'] === $last_palette) {
+      // Skip this one...it's the same as the last one
+    }
+    else {
+
+?>
+
+  <div class="row mx-auto" style="padding: 10px 0;">
+    <form method="get" action="">
+      <input name="removePaletteId" value="<?=$palette['palette_id'];?>" type="hidden">
+      <button type="submit" class="close" aria-label="Remove">
+        <span aria-hidden="true" style="padding-right: 10px;">&times;</span>
+      </button>
+    </form>
+    <div class="col">
+      <div class="align-middle"><?=$palette['palette_name'];?></div>
+    </div>
+  </div>
+
+
+<?php 
+    }
+    $last_palette = $palette['palette_id'];
+
+  }
+?>
+
 </div>
 
 <div class="col">
@@ -85,12 +154,13 @@
 ?>
   <div class="row mx-auto" style="padding: 10px 0;">
     <form method="get" action="">
-      <input name="removeId" value="<?=$color['id'];?>" type="hidden">
+      <input name="removeColorId" value="<?=$color['id'];?>" type="hidden">
       <button type="submit" class="close" aria-label="Remove">
         <span aria-hidden="true" style="padding-right: 10px;">&times;</span>
       </button>
     </form>
-    <div class="col" style="min-height: 25px; max-width: 100px; background-color: #<?=$color['hex_code'];?>;"></div>
+    <div class="col" style="min-height: 25px; max-width: 100px; background-color: #<?=$color['hex_code'];?>;">
+    </div>
     <div class="col">
       <div class="align-middle">
         <?=$color['color_name'];?>

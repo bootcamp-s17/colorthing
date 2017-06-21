@@ -37,15 +37,30 @@ Log in as the new user in either PSequel or pgAdmin:
       palette_id integer NOT NULL
     );
 
-Seed the colors table:
+  Seed the colors table:
 
-  INSERT INTO colors (color_name, hex_code) VALUES ('Black', '000000');
-  INSERT INTO colors (color_name, hex_code) VALUES ('White', 'ffffff');
-  INSERT INTO colors (color_name, hex_code) VALUES ('Silver', 'c0c0c0');
-  INSERT INTO colors (color_name, hex_code) VALUES ('Gray', '808080');
-  INSERT INTO colors (color_name, hex_code) VALUES ('Red', 'ff0000');
-  INSERT INTO colors (color_name, hex_code) VALUES ('Orange', 'ffa500');
-  INSERT INTO colors (color_name, hex_code) VALUES ('Yellow', 'ffff00');
-  INSERT INTO colors (color_name, hex_code) VALUES ('Green', '008000');
-  INSERT INTO colors (color_name, hex_code) VALUES ('Blue', '0000ff');
-  INSERT INTO colors (color_name, hex_code) VALUES ('Purple', '800080');
+    INSERT INTO colors (color_name, hex_code) VALUES ('Black', '000000');
+    INSERT INTO colors (color_name, hex_code) VALUES ('White', 'ffffff');
+    INSERT INTO colors (color_name, hex_code) VALUES ('Silver', 'c0c0c0');
+    INSERT INTO colors (color_name, hex_code) VALUES ('Gray', '808080');
+    INSERT INTO colors (color_name, hex_code) VALUES ('Red', 'ff0000');
+    INSERT INTO colors (color_name, hex_code) VALUES ('Orange', 'ffa500');
+    INSERT INTO colors (color_name, hex_code) VALUES ('Yellow', 'ffff00');
+    INSERT INTO colors (color_name, hex_code) VALUES ('Green', '008000');
+    INSERT INTO colors (color_name, hex_code) VALUES ('Blue', '0000ff');
+    INSERT INTO colors (color_name, hex_code) VALUES ('Purple', '800080');
+
+  Seed the palettes table:
+
+    INSERT INTO palettes (palette_name) VALUES ('4th of July');
+    INSERT INTO palettes (palette_name) VALUES ('Halloween');
+
+  Seed the color_palette table: 
+
+    (NOTE! This is broken SQL!)
+
+    INSERT INTO color_palette (color_id, palette_id) VALUES (red, 4th);
+    INSERT INTO color_palette (color_id, palette_id) VALUES (blue, 4th);
+    INSERT INTO color_palette (color_id, palette_id) VALUES (orange, halloween);
+    INSERT INTO color_palette (color_id, palette_id) VALUES (black, halloween);
+
