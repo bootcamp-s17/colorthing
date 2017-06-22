@@ -42,6 +42,18 @@
     removeColorFromPalette(getDb(), $safeId);
   }
 
+  if (isset($_GET['colorId']) && isset($_GET['paletteId'])) {
+    $safeColorId = htmlentities($_GET['colorId']);
+    $safePaletteId = htmlentities($_GET['paletteId']);
+    addColorToPalette(getDb(), $safeColorId, $safePaletteId);
+  }
+
+  function addColorToPalette($db, $color_id, $palette_id) {
+    $stmt = "insert into color_palette (color_id, palette_id) values ("
+      . $color_id . ', ' . $palette_id . ');';
+    $result = pg_query($stmt);
+  }
+
   function removeColorFromPalette($db, $id) {
     $stmt = "delete from color_palette where id=" . $id;
     pg_query($stmt);
@@ -104,7 +116,7 @@ ORDER BY palette_name;
 <div>
 
 <h4>New Color</h4>
-<form class="form-inline" method="get" action="" style="padding: 25px 0 30px 0;">
+<form class="form-inline" method="get" action="" style="padding: 0 0 30px 0;">
   <label class="sr-only" for="colorName">Color Name</label>
   <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="colorName" name="colorName" placeholder="The deep dark void...">
   <label class="sr-only" for="hexCode">Hex Code</label>
@@ -116,7 +128,7 @@ ORDER BY palette_name;
 </form>
 
 <h4>New Palette</h4>
-<form class="form-inline" method="get" action="" style="padding: 25px 0 30px 0;">
+<form class="form-inline" method="get" action="" style="padding: 0 0 30px 0;">
   <label class="sr-only" for="paletteName">Palette Name</label>
   <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="paletteName" name="paletteName" placeholder="The most beautiful...">
   <button type="submit" class="btn btn-secondary">Add Palette</button>
@@ -153,6 +165,20 @@ ORDER BY palette_name;
     </div>
   </div>
 
+  <form method="get" action="">
+    <div class="form-inline">
+      <label for="colorSelect" class="sr-only">Color Select</label>
+      <select class="form-control form-control mb-2 mr-sm-2 mb-sm-0" id="colorSelect" name="colorId">
+<?php 
+  foreach (getColors(getDb()) as $color) {
+    print '<option value="' . $color['id'] . '">' . $color['color_name'] . "</option>\n";
+  }
+?>
+      </select>
+      <input type="hidden" name="paletteId" value="<?=$palette['palette_id'];?>">
+      <button type="submit" class="btn btn-secondary">Add to Palette</button>
+    </div>
+  </form>
 
 <?php
     }
