@@ -9,6 +9,7 @@
   <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/png" href="rainbow_heart.png">
 </head>
 <body>
@@ -36,6 +37,16 @@
     removePalette(getDb(), $safeId);
   }
 
+  if (isset($_GET['removeColorFromPalette'])) {
+    $safeId = htmlentities($_GET['removeColorFromPalette']);
+    removeColorFromPalette(getDb(), $safeId);
+  }
+
+  function removeColorFromPalette($db, $id) {
+    $stmt = "delete from color_palette where id=" . $id;
+    pg_query($stmt);
+  }
+
   function removePalette($db, $id) {
     $stmt_p = "delete from palettes where id=" . $id;
     $stmt_cp = "delete from color_palette where palette_id=" . $id;
@@ -51,7 +62,7 @@
 
   function getPalettes($db) {
     $request = pg_query(getDb(), "
-SELECT palettes.id AS palette_id, palette_name, color_palette.color_id, colors.color_name
+SELECT palettes.id AS palette_id, palette_name, color_palette.id AS color_palette_id, color_palette.color_id, colors.color_name, colors.hex_code
 FROM palettes 
 LEFT JOIN color_palette ON palettes.id = color_palette.palette_id
 LEFT JOIN colors ON color_palette.color_id = colors.id
@@ -123,7 +134,8 @@ ORDER BY palette_name;
 
   foreach (getPalettes(getDb()) as $palette) {
     if ($palette['palette_id'] === $last_palette) {
-      // Skip this one...it's the same as the last one
+      // Do we need to do anything here?
+      // Case: new palette
     }
     else {
 
@@ -142,11 +154,36 @@ ORDER BY palette_name;
   </div>
 
 
-<?php 
+<?php
     }
-    $last_palette = $palette['palette_id'];
+
+if (isset($palette['color_name'])) {
+?>
+
+  <div class="row mx-auto" style="padding: 10px 0;">
+    <form method="get" action="">
+      <input name="removeColorFromPalette" value="<?=$palette['color_palette_id'];?>" type="hidden">
+      <button type="submit" class="close" aria-label="Remove">
+        <span aria-hidden="true" style="padding-right: 10px;">&times;</span>
+      </button>
+    </form>
+    <div class="col" style="min-height: 25px; max-width: 100px; background-color: #<?=$palette['hex_code'];?>;">
+    </div>
+    <div class="col">
+      <div class="align-middle">
+        <?=$palette['color_name'];?>
+        (#<?=$palette['hex_code'];?>)
+      </div>
+    </div>
+  </div>
+
+<?php
 
   }
+
+  $last_palette = $palette['palette_id'];
+
+}
 ?>
 
 </div>
