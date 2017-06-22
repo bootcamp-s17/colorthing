@@ -16,22 +16,6 @@
 
 <?php 
 
-  if (isset($_GET['colorName']) && isset($_GET['hexCode'])) {
-    $safeColorName = htmlentities($_GET['colorName']);
-    $safeHexCode = htmlentities($_GET['hexCode']);
-    addColor(getDb(), $safeColorName, $safeHexCode);
-  }
-
-  if (isset($_GET['removeColorId'])) {
-    $safeId = htmlentities($_GET['removeColorId']);
-    removeColor(getDb(), $safeId);
-  }
-
-  if (isset($_GET['paletteName'])) {
-    $safePaletteName = htmlentities($_GET['paletteName'], ENT_QUOTES);
-    addPalette(getDb(), $safePaletteName);
-  }
-
   if (isset($_GET['removePaletteId'])) {
     $safeId = htmlentities($_GET['removePaletteId']);
     removePalette(getDb(), $safeId);
@@ -66,12 +50,6 @@
     pg_query($stmt_p);
   }
 
-  function addPalette($db, $name) {
-    $stmt = "insert into palettes (palette_name) values ("
-      . '\'' . $name . '\');';
-    $result = pg_query($stmt);
-  }
-
   function getPalettes($db) {
     $request = pg_query(getDb(), "
 SELECT palettes.id AS palette_id, palette_name, color_palette.id AS color_palette_id, color_palette.color_id, colors.color_name, colors.hex_code
@@ -88,25 +66,6 @@ ORDER BY palette_name;
     return $db;
   }
 
-  function getColors($db) {
-    $request = pg_query(getDb(), "SELECT * FROM colors order by color_name;");
-    return pg_fetch_all($request);
-  }
-
-  function addColor($db, $name, $hex) {
-    $stmt = "insert into colors (color_name, hex_code) values ("
-      . '\'' . $name . '\', \''
-      . $hex . '\');';
-    $result = pg_query($stmt);
-  }
-
-  function removeColor($db, $id) {
-    $stmt_c = "delete from colors where id=" . $id;
-    $stmt_cp = "delete from color_palette where color_id=" . $id;
-    pg_query($stmt_cp);
-    pg_query($stmt_c);
-  }
-
 ?>
 
 <div class="container" style="padding-top: 30px;">
@@ -115,25 +74,9 @@ ORDER BY palette_name;
 
 <div>
 
-<h4>New Color</h4>
-<form class="form-inline" method="get" action="" style="padding: 0 0 30px 0;">
-  <label class="sr-only" for="colorName">Color Name</label>
-  <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="colorName" name="colorName" placeholder="The deep dark void...">
-  <label class="sr-only" for="hexCode">Hex Code</label>
-  <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-    <div class="input-group-addon">#</div>
-    <input type="text" class="form-control" id="hexCode" name="hexCode" placeholder="000000">
-  </div>
-  <button type="submit" class="btn btn-secondary">Add Color</button>
-</form>
+<?php include('components/color.php'); ?>
 
-<h4>New Palette</h4>
-<form class="form-inline" method="get" action="" style="padding: 0 0 30px 0;">
-  <label class="sr-only" for="paletteName">Palette Name</label>
-  <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="paletteName" name="paletteName" placeholder="The most beautiful...">
-  <button type="submit" class="btn btn-secondary">Add Palette</button>
-</form>
-
+<?php include('components/palette.php'); ?>
 
 <div class="row">
 
